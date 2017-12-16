@@ -4,20 +4,26 @@ const config = require('./config');
 const helper = require('./helper');
 const kb = require('./keyboard-buttons');
 const keyboard = require('./keyboard');
+const database = require('../database.json')
 
 helper.logStart()
+mongoose.Promise = global.Promise
 mongoose.connect(config.DB_URL, {
     useMongoClient: true
-}).then(() => console.log('MongoDB connected!'))
+})
+    .then(() => console.log('MongoDB connected!'))
     .catch((err) => console.log(err.toString()))
 
 require('./models/film.model')
-const Film = mongoose.model('Films')
+const Film = mongoose.model('films')
+
+//database.films.forEach(f => new Film(f).save().catch(e => console.log(e)))
 
 const bot = new TelegramBot(config.TOKEN, {
     polling: true
 })
 
+//======================================================
 bot.on('message', msg => {
     const ChatId = helper.getChatId(msg);
     switch (msg.text) {
