@@ -35,8 +35,18 @@ bot.on('message', msg => {
             })
             break
         case kb.home.favourite:
+
             break
         case kb.home.cinemas:
+            break
+        case kb.film.action:
+            sendFilmsByQuery(ChatId, {type: 'action'})
+            break
+        case kb.film.comedy:
+            sendFilmsByQuery(ChatId, {type: 'comedy'})
+            break
+        case kb.film.random:
+            sendFilmsByQuery(ChatId, {})
             break
         case kb.back:
             bot.sendMessage(ChatId, `Что хотите посмотреть?`, {
@@ -56,3 +66,8 @@ bot.onText(/\/start/, msg => {
         }
     })
 })
+
+//==========================================================
+function sendFilmsByQuery(ChatId, query) {
+    Film.find(query).then((f)=> console.log(f)).catch((e) => consile.log(e))
+}
