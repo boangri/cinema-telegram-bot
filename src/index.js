@@ -68,6 +68,21 @@ bot.onText(/\/start/, msg => {
 })
 
 //==========================================================
-function sendFilmsByQuery(ChatId, query) {
-    Film.find(query).then((f)=> console.log(f)).catch((e) => consile.log(e))
+function sendFilmsByQuery(chatId, query) {
+    Film.find(query).then((films)=> {
+        const html = films.map((f, i) => {
+            return `<b>${i+1}</b> ${f.name} - /f${f.uuid}`
+        }).join('\n')
+        sendHTML(chatId, html, films);
+    }).catch((e) => console.log(e.toString()))
+}
+
+function sendHTML(chatId, html, kbName = null) {
+    options = {
+        parse_mode: 'HTML',
+    }
+    if (kbName) {
+        options['reply_markup'] = keyboard[kbName]
+    }
+    bot.sendMessage(chatId, html, options);
 }
