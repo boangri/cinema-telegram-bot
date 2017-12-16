@@ -1,0 +1,22 @@
+{
+  "name": "cinema-bot",
+  "version": "0.1.0",
+  "description": "Tutorial Telegram bot for searching films and cinemas",
+  "main": "index.js",
+  "scripts": {
+    "start": "node ./src/index.js",
+    "dev": "nodemon ./src/index.js"
+  },
+  "keywords": [
+    "telegram",
+    "bot"
+  ],
+  "author": "Boris Gribovskiy <xinu@yandex.ru>",
+  "license": "ISC",
+  "dependencies": {
+    "node-telegram-bot-api": "^0.29.0"
+  },
+  "devDependencies": {
+    "nodemon": "^1.12.7"
+  }
+}
