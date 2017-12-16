@@ -14,6 +14,7 @@
   "author": "Boris Gribovskiy <xinu@yandex.ru>",
   "license": "ISC",
   "dependencies": {
+    "mongoose": "^4.13.7",
     "node-telegram-bot-api": "^0.29.0"
   },
   "devDependencies": {
