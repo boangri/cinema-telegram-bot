@@ -9,7 +9,10 @@ helper.logStart()
 mongoose.connect(config.DB_URL, {
     useMongoClient: true
 }).then(() => console.log('MongoDB connected!'))
-    .catch((err) => console.log(err))
+    .catch((err) => console.log(err.toString()))
+
+require('./models/film.model')
+const Film = mongoose.model('Films')
 
 const bot = new TelegramBot(config.TOKEN, {
     polling: true
