@@ -4,7 +4,10 @@ module.exports = {
         favourite: 'Избранное',
         cinemas: 'Кинотеатры'
     },
-    film: {
-
-    }
+    films: {
+        random: 'Случайный жанр',
+        action: 'Боевик',
+        comedy: 'Комедия'
+    },
+    back: 'Назад'
 }

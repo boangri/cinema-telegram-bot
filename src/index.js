@@ -11,12 +11,25 @@ const bot = new TelegramBot(config.TOKEN, {
 })
 
 bot.on('message', msg => {
+    const ChatId = helper.getChatId(msg);
     switch (msg.text) {
         case kb.home.films:
+            bot.sendMessage(ChatId, `Выберите жанр:`, {
+                reply_markup: {
+                    keyboard: keyboard.films
+                }
+            })
             break
         case kb.home.favourite:
             break
         case kb.home.cinemas:
+            break
+        case kb.back:
+            bot.sendMessage(ChatId, `Что хотите посмотреть?`, {
+                reply_markup: {
+                    keyboard: keyboard.home
+                }
+            })
             break
     }
 })
