@@ -67,6 +67,7 @@ bot.on('message', msg => {
     }
     if (msg.location) {
         console.log(msg.location)
+        getCinemasInCoord(ChatId, msg.location)
     }
 })
 
