@@ -67,6 +67,37 @@ bot.onText(/\/start/, msg => {
     })
 })
 
+bot.onText(/\/f(.+)/, (msg, [source, match]) => {
+    const filmUuid = helper.getItemUuid(source)
+    Film.findOne({uuid: filmUuid}).then(film => {
+        const caption = `Название: ${film.name}
+Год: ${film.year}
+Страна: ${film.country}
+Рейтинг: ${film.rate}
+Длина: ${film.length}
+`
+        bot.sendPhoto(msg.chat.id, film.picture, {
+            caption: caption,
+            reply_markup: {
+                inline_keyboard: [
+                    [{
+                        text: 'Добавить в избранное',
+                        callback_data: film.uuid
+                    },{
+                        text: 'Показать кинотеатры',
+                        callback_data: film.uuid
+                    }],
+                    [{
+                        text: 'Найти в этот фильм в кинопоиске',
+                        url: film.link
+                    }]
+                ]
+            }
+        })
+    })
+})
+
+
 //==========================================================
 function sendFilmsByQuery(chatId, query) {
     Film.find(query).then((films)=> {

@@ -4,5 +4,8 @@ module.exports = {
     },
     getChatId(msg) {
         return msg.chat.id
+    },
+    getItemUuid(s) {
+        return s.substr(2,s.length)
     }
 };
