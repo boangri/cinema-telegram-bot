@@ -40,6 +40,11 @@ bot.on('message', msg => {
 
             break
         case kb.home.cinemas:
+            bot.sendMessage(ChatId, 'Отправить местоположение', {
+                reply_markup: {
+                    keyboard: keyboard.cinemas
+                }
+            })
             break
         case kb.film.action:
             sendFilmsByQuery(ChatId, {type: 'action'})
@@ -57,6 +62,9 @@ bot.on('message', msg => {
                 }
             })
             break
+    }
+    if (msg.location) {
+        console.log(msg.location)
     }
 })
 
