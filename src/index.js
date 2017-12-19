@@ -25,11 +25,20 @@ const User = mongoose.model('users')
 
 //database.films.forEach(f => new Film(f).save().catch(e => console.log(e)))
 //database.cinemas.forEach(c => new Cinema(c).save().catch(e => console.log(e)))
+
+const ACTION_TYPE = {
+    TOGGLE_FAV_FILM: 'tff',
+    SHOW_CINEMAS: 'sc',
+    SHOW_CINEMAS_MAP: 'scm',
+    SHOW_FILMS: 'sf'
+
+}
+//======================================================
+
 const bot = new TelegramBot(config.TOKEN, {
     polling: true
 })
 
-//======================================================
 bot.on('message', msg => {
     const chatId = helper.getChatId(msg);
     switch (msg.text) {
@@ -97,10 +106,16 @@ bot.onText(/\/f(.+)/, (msg, [source, match]) => {
                 inline_keyboard: [
                     [{
                         text: 'Добавить в избранное',
-                        callback_data: film.uuid
+                        callback_data: JSON.stringify({
+                            type: ACTION_TYPE.TOGGLE_FAV_FILM,
+                            filmUuid: film.uuid
+                        })
                     },{
                         text: 'Показать кинотеатры',
-                        callback_data: film.uuid
+                        callback_data: JSON.stringify({
+                            type: ACTION_TYPE.SHOW_CINEMAS,
+                            cinemaUuids: film.cinemas
+                        })
                     }],
                     [{
                         text: 'Найти в этот фильм в кинопоиске',
@@ -128,19 +143,45 @@ bot.onText(/\/c(.+)/, (msg, [source , match]) => {
                         },
                         {
                             text: 'Показать на карте',
-                            callback_data: cinema.uuid
+                            callback_data: JSON.stringify({
+                                type: ACTION_TYPE.SHOW_CINEMAS_MAP,
+                                lat: cinema.location.latitude,
+                                lon: cinema.location.longitude
+                            })
                         }
                     ],
                     [
                         {
                             text: 'Показать фильмы ',
-                            callback_data: JSON.stringify(cinema.films)
+                            callback_data: JSON.stringify({
+                                type: ACTION_TYPE.SHOW_FILMS,
+                                filmUuids: cinema.films
+                            })
                         }
                     ]
                 ]
             }
         } )
     })
+})
+
+bot.on('callback_query', query => {
+    let data
+    try {
+        data = JSON.parse(query.data)
+    } catch (e) {
+        throw new Error('Dat is not an object')
+    }
+    const {type} = data
+    if (type === ACTION_TYPE.SHOW_CINEMAS_MAP) {
+
+    } else if (type === ACTION_TYPE.SHOW_CINEMAS) {
+
+    } else if (type === ACTION_TYPE.TOGGLE_FAV_FILM) {
+
+    } else if (type === ACTION_TYPE.SHOW_FILMS) {
+
+    }
 })
 
 //==========================================================
