@@ -127,7 +127,9 @@ function sendHTML(chatId, html, kbName = null) {
         parse_mode: 'HTML',
     }
     if (kbName) {
-        options['reply_markup'] = keyboard[kbName]
+        options['reply_markup'] = {
+            keyboard: keyboard[kbName]
+        }
     }
     bot.sendMessage(chatId, html, options);
 }
