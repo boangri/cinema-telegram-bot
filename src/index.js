@@ -29,10 +29,10 @@ const bot = new TelegramBot(config.TOKEN, {
 
 //======================================================
 bot.on('message', msg => {
-    const ChatId = helper.getChatId(msg);
+    const chatId = helper.getChatId(msg);
     switch (msg.text) {
         case kb.home.films:
-            bot.sendMessage(ChatId, `Выберите жанр:`, {
+            bot.sendMessage(chatId, `Выберите жанр:`, {
                 reply_markup: {
                     keyboard: keyboard.films
                 }
@@ -42,23 +42,23 @@ bot.on('message', msg => {
 
             break
         case kb.home.cinemas:
-            bot.sendMessage(ChatId, 'Отправить местоположение', {
+            bot.sendMessage(chatId, 'Отправить местоположение', {
                 reply_markup: {
                     keyboard: keyboard.cinemas
                 }
             })
             break
         case kb.film.action:
-            sendFilmsByQuery(ChatId, {type: 'action'})
+            sendFilmsByQuery(chatId, {type: 'action'})
             break
         case kb.film.comedy:
-            sendFilmsByQuery(ChatId, {type: 'comedy'})
+            sendFilmsByQuery(chatId, {type: 'comedy'})
             break
         case kb.film.random:
-            sendFilmsByQuery(ChatId, {})
+            sendFilmsByQuery(chatId, {})
             break
         case kb.back:
-            bot.sendMessage(ChatId, `Что хотите посмотреть?`, {
+            bot.sendMessage(chatId, `Что хотите посмотреть?`, {
                 reply_markup: {
                     keyboard: keyboard.home
                 }
@@ -67,7 +67,7 @@ bot.on('message', msg => {
     }
     if (msg.location) {
         console.log(msg.location)
-        getCinemasInCoord(ChatId, msg.location)
+        getCinemasInCoord(chatId, msg.location)
     }
 })
 
@@ -110,6 +110,36 @@ bot.onText(/\/f(.+)/, (msg, [source, match]) => {
     })
 })
 
+bot.onText(/\/c(.+)/, (msg, [source , match]) => {
+    const cinemaUuid = helper.getItemUuid(source)
+    const chatId = msg.chat.id;
+    console.log(source)
+    Cinema.findOne({uuid: cinemaUuid}).then(cinema => {
+
+        bot.sendMessage(chatId, `Кинотеатр ${cinema.name}`, {
+            reply_markup: {
+                inline_keyboard: [
+                    [
+                        {
+                            text: cinema.name,
+                            url: cinema.url
+                        },
+                        {
+                            text: 'Показать на карте',
+                            callback_data: cinema.uuid
+                        }
+                    ],
+                    [
+                        {
+                            text: 'Показать фильмы ',
+                            callback_data: JSON.stringify(cinema.films)
+                        }
+                    ]
+                ]
+            }
+        } )
+    })
+})
 
 //==========================================================
 function sendFilmsByQuery(chatId, query) {
