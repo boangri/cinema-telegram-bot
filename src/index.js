@@ -50,7 +50,7 @@ bot.on('message', msg => {
             })
             break
         case kb.home.favourite:
-
+            showFavouriteFilms(chatId, msg.from.id)
             break
         case kb.home.cinemas:
             bot.sendMessage(chatId, 'Отправить местоположение', {
@@ -255,6 +255,23 @@ function toggleFavouriteFilm(userId, queryId, {filmUuid, isFav}) {
                     callback_query_id: queryId,
                     text: answerText
                 })
-            }).catch(err => console.log(err))
-        }).catch(err => console.log(err))
+            }).catch(err => console.log(1, err))
+        }).catch(err => console.log(2, err))
+}
+
+function showFavouriteFilms(chatId, userId) {
+    User.findOne({telegramid: userId})
+        .then(user => {
+            let html = 'Вы ничего не добавили'
+            if(user) {
+                Film.find({uuid: {'$in': user.films}}).then(films => {
+                    if(films.length) {
+                        html = films.map((f, i) => {
+                            return `<b>{$i +1}</b> {$f.name} - <b>{$f.rate}</b> (/f{$f.uuid})`
+                        }).join('\n')
+                    }
+                }).catch(e => console.log(e))
+            }
+            sendHTML(chatId, html, 'home')
+        }).catch(e => console.log(e))
 }
