@@ -96,7 +96,7 @@ bot.onText(/\/f(.+)/, (msg, [source, match]) => {
     const chatId = msg.chat.id
     Promise.all([
         Film.findOne({uuid: filmUuid}),
-        User.findOne({telegramid: msg.fromid})
+        User.findOne({telegramid: msg.from.id})
     ]).then(([film, user]) => {
     let isFav = false
     if(user) {
@@ -250,7 +250,6 @@ function toggleFavouriteFilm(userId, queryId, {filmUuid, isFav}) {
                 })
             }
             const answerText = isFav ? 'Удален из избранного' : 'Добавлен в избранное'
-            console.log(userPromise.films)
             userPromise.save().then(_ => {
                 bot.answerCallbackQuery({
                     callback_query_id: queryId,
