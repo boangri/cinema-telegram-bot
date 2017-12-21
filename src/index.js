@@ -82,6 +82,26 @@ bot.on('message', msg => {
     }
 })
 
+bot.on('callback_query', query => {
+    const userId = query.from.id
+    let data
+    try {
+        data = JSON.parse(query.data)
+    } catch (e) {
+        throw new Error('Dat is not an object')
+    }
+    const {type} = data
+    if (type === ACTION_TYPE.SHOW_CINEMAS_MAP) {
+
+    } else if (type === ACTION_TYPE.SHOW_CINEMAS) {
+        sendCinemasByQuery(userId, {uuid: {'$in': data.cinemaUuids}})
+    } else if (type === ACTION_TYPE.TOGGLE_FAV_FILM) {
+        toggleFavouriteFilm(userId, query.id, data)
+    } else if (type === ACTION_TYPE.SHOW_FILMS) {
+
+    }
+})
+
 bot.onText(/\/start/, msg => {
     const greeting = `Здравствуйте ${msg.from.first_name}\nВыберите команду из списка:`
     bot.sendMessage(helper.getChatId(msg), greeting, {
@@ -175,27 +195,6 @@ bot.onText(/\/c(.+)/, (msg, [source , match]) => {
     })
 })
 
-bot.on('callback_query', query => {
-    const userId = query.from.id
-    let data
-    try {
-        data = JSON.parse(query.data)
-    } catch (e) {
-        throw new Error('Dat is not an object')
-    }
-    const {type} = data
-    if (type === ACTION_TYPE.SHOW_CINEMAS_MAP) {
-
-    } else if (type === ACTION_TYPE.SHOW_CINEMAS) {
-
-    } else if (type === ACTION_TYPE.TOGGLE_FAV_FILM) {
-        toggleFavouriteFilm(userId, query.id, data)
-
-    } else if (type === ACTION_TYPE.SHOW_FILMS) {
-
-    }
-})
-
 //==========================================================
 function sendFilmsByQuery(chatId, query) {
     Film.find(query).then((films)=> {
@@ -274,4 +273,13 @@ function showFavouriteFilms(chatId, userId) {
             }
             sendHTML(chatId, html, 'home')
         }).catch(e => console.log(e))
+}
+
+function sendCinemasByQuery(userId, query) {
+    Cinema.find(query).then(cinemas => {
+        const html = cinemas.map((c, i) => {
+            return `<b>${i+1}</b> ${c.name} - /c${c.uuid}`
+        }).join('\n')
+        sendHTML(userId, html, 'home')
+    })
 }
