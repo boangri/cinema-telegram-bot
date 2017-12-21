@@ -99,7 +99,7 @@ bot.on('callback_query', query => {
     } else if (type === ACTION_TYPE.TOGGLE_FAV_FILM) {
         toggleFavouriteFilm(userId, query.id, data)
     } else if (type === ACTION_TYPE.SHOW_FILMS) {
-
+        sendFilmsByQuery(userId, {uuid: {'$in': data.filmUuids}})
     }
 })
 
@@ -226,7 +226,7 @@ function getCinemasInCoord(chatId, location) {
         })
         cinemas = _.sortBy(cinemas, 'distance')
         const html = cinemas.map((c, i) => {
-            return `<b>${i + 1}</b> ${c.name}. <em>Расстояние</em> - <strong>${c.distance} км. /c${c.uuid}</strong>`
+            return `<b>${i + 1}</b> ${c.name}. <em>Расстояние</em> - <strong>${c.distance}</strong> км. /c${c.uuid}`
         }).join('\n')
         sendHTML(chatId, html, 'home')
     })
