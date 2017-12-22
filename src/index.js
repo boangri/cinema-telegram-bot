@@ -103,6 +103,38 @@ bot.on('callback_query', query => {
     }
 })
 
+bot.on('inline_query', query => {
+    Film.find({}).then(films => {
+        const results = films.map(f => {
+            const caption = `Название: ${f.name}
+Год: ${f.year}
+Страна: ${f.country}
+Рейтинг: ${f.rate}
+Длина: ${f.length}`
+            return {
+                id: f.uuid,
+                type: 'photo',
+                photo_url: f.picture,
+                thumb_url: f.picture,
+                caption: caption,
+                reply_markup: {
+                    inline_keyboard: [
+                        [
+                            {
+                                text: `Кинопоиск: ${f.name}`,
+                                url: f.link
+                            }
+                        ]
+                    ]
+                }
+            }
+        })
+        bot.answerInlineQuery(query.id, results, {
+            cache_time: 0
+        })
+    })
+})
+
 bot.onText(/\/start/, msg => {
     const greeting = `Здравствуйте ${msg.from.first_name}\nВыберите команду из списка:`
     bot.sendMessage(helper.getChatId(msg), greeting, {
