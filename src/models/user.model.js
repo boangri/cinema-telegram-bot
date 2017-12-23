@@ -9,6 +9,8 @@ const UserSchema = new Schema({
         type: [String],
         default: []
     }
+},{
+    usePushEach: true
 })
 
 mongoose.model('users', UserSchema)

@@ -31,7 +31,6 @@ const ACTION_TYPE = {
     SHOW_CINEMAS: 'sc',
     SHOW_CINEMAS_MAP: 'scm',
     SHOW_FILMS: 'sf'
-
 }
 //======================================================
 
@@ -77,7 +76,6 @@ bot.on('message', msg => {
             break
     }
     if (msg.location) {
-        console.log(msg.location)
         getCinemasInCoord(chatId, msg.location)
     }
 })
@@ -193,9 +191,7 @@ bot.onText(/\/f(.+)/, (msg, [source, match]) => {
 bot.onText(/\/c(.+)/, (msg, [source , match]) => {
     const cinemaUuid = helper.getItemUuid(source)
     const chatId = msg.chat.id;
-    console.log(source)
     Cinema.findOne({uuid: cinemaUuid}).then(cinema => {
-
         bot.sendMessage(chatId, `Кинотеатр ${cinema.name}`, {
             reply_markup: {
                 inline_keyboard: [
@@ -240,15 +236,15 @@ function sendFilmsByQuery(chatId, query) {
 }
 
 function sendHTML(chatId, html, kbName = null) {
-    options = {
-        parse_mode: 'HTML',
+    const options = {
+        parse_mode: 'HTML'
     }
     if (kbName) {
         options['reply_markup'] = {
             keyboard: keyboard[kbName]
         }
     }
-    bot.sendMessage(chatId, html, options);
+    bot.sendMessage(chatId, html, options)
 }
 
 function getCinemasInCoord(chatId, location) {
@@ -295,16 +291,18 @@ function showFavouriteFilms(chatId, userId) {
     User.findOne({telegramid: userId})
         .then(user => {
             let html = 'Вы ничего не добавили'
-            if(user) {
+            if (user) {
                 Film.find({uuid: {'$in': user.films}}).then(films => {
-                    if(films.length) {
+                    if (films.length) {
                         html = films.map((f, i) => {
-                            return `<b>{$i +1}</b> {$f.name} - <b>{$f.rate}</b> (/f{$f.uuid})`
+                            return `<b>${i +1}</b> ${f.name} - <b>${f.rate}</b> (/f${f.uuid})`
                         }).join('\n')
                     }
+                    sendHTML(chatId, html, 'home')
                 }).catch(e => console.log(e))
+            } else {
+                sendHTML(chatId, html, 'home')
             }
-            sendHTML(chatId, html, 'home')
         }).catch(e => console.log(e))
 }
 
